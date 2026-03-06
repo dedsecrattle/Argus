@@ -1,0 +1,14 @@
+[workspace]
+members = [
+  "crates/argus-common",
+  "crates/argus-config",
+  "crates/argus-frontier",
+  "crates/argus-fetcher",
+  "crates/argus-parser",
+  "crates/argus-robots",
+  "crates/argus-dedupe",
+  "crates/argus-storage",
+  "crates/argus-worker",
+  "crates/argus-cli",
+]
+resolver = "2"
