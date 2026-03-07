@@ -3,6 +3,10 @@ name = "argus-worker"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = []
+redis = ["argus-frontier/redis", "argus-dedupe/redis"]
+
 [dependencies]
 anyhow = "1"
 tokio = { version = "1", features = ["full"] }

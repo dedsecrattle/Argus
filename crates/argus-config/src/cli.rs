@@ -17,4 +17,8 @@ pub struct Cli {
 
     #[arg(long, default_value_t = 2)]
     pub max_depth: u16,
+
+    /// Redis URL for distributed mode. If set with no value, uses redis://127.0.0.1:6379/ (matches docker-compose).
+    #[arg(long, num_args = 0..=1, default_missing_value = "redis://127.0.0.1:6379/")]
+    pub redis_url: Option<String>,
 }

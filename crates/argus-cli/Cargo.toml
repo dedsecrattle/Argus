@@ -11,4 +11,4 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 
 argus-config = { path = "../argus-config" }
-argus-worker = { path = "../argus-worker" }
+argus-worker = { path = "../argus-worker", features = ["redis"] }

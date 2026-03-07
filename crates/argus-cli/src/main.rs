@@ -24,7 +24,12 @@ async fn main() -> Result<()> {
         per_host_concurrency: cli.per_host_concurrency,
         per_host_delay_ms: cli.per_host_delay_ms,
     };
-    argus_worker::worker::run(config).await?;
+
+    if let Some(ref redis_url) = cli.redis_url {
+        argus_worker::worker::run_redis(config, redis_url).await?;
+    } else {
+        argus_worker::worker::run_in_memory(config).await?;
+    }
 
     Ok(())
 }
