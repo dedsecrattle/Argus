@@ -59,7 +59,8 @@ where
 
     let fetched = Arc::new(AtomicU64::new(0));
     let active = Arc::new(AtomicU64::new(0));
-    let last_fetch_per_host: Arc<Mutex<HashMap<String, Instant>>> = Arc::new(Mutex::new(HashMap::new()));
+    let last_fetch_per_host: Arc<Mutex<HashMap<String, Instant>>> =
+        Arc::new(Mutex::new(HashMap::new()));
     let delay = Duration::from_millis(config.per_host_delay_ms);
 
     let concurrency = config.global_concurrency.max(1);
@@ -144,7 +145,9 @@ where
                 let links = html::extract_links(&fetch_result.final_url, &fetch_result.body);
 
                 for link in links {
-                    let Some((norm_url, link_host)) = argus_common::url::normalize_url(&link.to_url) else {
+                    let Some((norm_url, link_host)) =
+                        argus_common::url::normalize_url(&link.to_url)
+                    else {
                         continue;
                     };
                     if !seen.insert_if_new(norm_url.clone()).await {

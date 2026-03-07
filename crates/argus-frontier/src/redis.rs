@@ -42,8 +42,11 @@ impl Frontier for RedisFrontier {
         };
         let mut conn = self.conn.lock().await;
         let key = self.queue_key.clone();
-        let _: Result<(), redis::RedisError> =
-            redis::cmd("LPUSH").arg(&key).arg(serialized).query_async(&mut *conn).await;
+        let _: Result<(), redis::RedisError> = redis::cmd("LPUSH")
+            .arg(&key)
+            .arg(serialized)
+            .query_async(&mut *conn)
+            .await;
     }
 
     async fn pop(&self) -> Option<CrawlJob> {
