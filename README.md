@@ -6,7 +6,7 @@
 
 **Argus** is a distributed web crawler written in Rust. Run it as a single process or scale out across many workers sharing a Redis-backed queue and seen set.
 
-[![CI](https://github.com/your-username/argus/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/argus/actions)
+[![CI](https://github.com/dedsecrattle/argus/actions/workflows/ci.yml/badge.svg)](https://github.com/dedsecrattle/argus/actions)
 
 ---
 
@@ -53,10 +53,10 @@ See [Deployment](docs/deployment.md) for multi-worker and continuous-crawl setup
 
 ### Commands
 
-| Command | Description |
-|--------|-------------|
+| Command | Description                                                                                                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `crawl` | Run the crawler. Seeds the queue (or Redis) with `--seed-url` if given, then consumes until the queue is empty. With `--redis-url`, omit `--seed-url` to run as a consumer only. |
-| `seed` | Push one or more URLs into the Redis frontier and exit. Use to feed a shared queue without running a crawl. |
+| `seed`  | Push one or more URLs into the Redis frontier and exit. Use to feed a shared queue without running a crawl.                                                                      |
 
 ### Examples
 
@@ -74,22 +74,22 @@ argus crawl --redis-url --redis-rate-limit
 
 ### Crawl options
 
-| Option | Default | Description |
-|--------|--------|--------------|
-| `--seed-url <URL>` | required (unless Redis consumer-only) | Starting URL. Omit when using `--redis-url` to run as consumer only. |
-| `--max-depth <N>` | 2 | Maximum link depth from seed. |
-| `--global-concurrency <N>` | 32 | Number of concurrent fetch tasks per process. |
-| `--per-host-delay-ms <MS>` | 500 | Minimum delay between requests to the same host. |
-| `--redis-url [URL]` | (none) | Use Redis for frontier and seen set. No value = `redis://127.0.0.1:6379/`. |
-| `--redis-rate-limit` | false | Use Redis for per-host rate limiting (shared across workers). |
-| `--storage-dir <DIR>` | (none) | Directory for persisted pages (`page/*.json`, `body/*.bin`). |
+| Option                     | Default                               | Description                                                                |
+| -------------------------- | ------------------------------------- | -------------------------------------------------------------------------- |
+| `--seed-url <URL>`         | required (unless Redis consumer-only) | Starting URL. Omit when using `--redis-url` to run as consumer only.       |
+| `--max-depth <N>`          | 2                                     | Maximum link depth from seed.                                              |
+| `--global-concurrency <N>` | 32                                    | Number of concurrent fetch tasks per process.                              |
+| `--per-host-delay-ms <MS>` | 500                                   | Minimum delay between requests to the same host.                           |
+| `--redis-url [URL]`        | (none)                                | Use Redis for frontier and seen set. No value = `redis://127.0.0.1:6379/`. |
+| `--redis-rate-limit`       | false                                 | Use Redis for per-host rate limiting (shared across workers).              |
+| `--storage-dir <DIR>`      | (none)                                | Directory for persisted pages (`page/*.json`, `body/*.bin`).               |
 
 ### Seed options
 
-| Option | Description |
-|--------|-------------|
-| `--redis-url [URL]` | Redis URL. No value = `redis://127.0.0.1:6379/`. |
-| `-u, --url <URL>...` | One or more URLs to push onto the frontier. |
+| Option               | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| `--redis-url [URL]`  | Redis URL. No value = `redis://127.0.0.1:6379/`. |
+| `-u, --url <URL>...` | One or more URLs to push onto the frontier.      |
 
 ## Redis and Docker
 
@@ -112,18 +112,18 @@ Omit `--storage-dir` to run without writing to disk.
 
 ## Project structure
 
-| Crate | Description |
-|-------|-------------|
-| [argus-common](crates/argus-common) | Shared types, URL normalization |
-| [argus-config](crates/argus-config) | CLI and config types |
-| [argus-frontier](crates/argus-frontier) | URL queue (in-memory, Redis) |
-| [argus-fetcher](crates/argus-fetcher) | HTTP client |
-| [argus-parser](crates/argus-parser) | HTML link extraction |
-| [argus-robots](crates/argus-robots) | robots.txt (stub) |
-| [argus-dedupe](crates/argus-dedupe) | Seen-URL set (in-memory, Redis) |
-| [argus-storage](crates/argus-storage) | Persistence (no-op, file) |
-| [argus-worker](crates/argus-worker) | Crawl loop and rate limiting |
-| [argus-cli](crates/argus-cli) | CLI entrypoint |
+| Crate                                   | Description                     |
+| --------------------------------------- | ------------------------------- |
+| [argus-common](crates/argus-common)     | Shared types, URL normalization |
+| [argus-config](crates/argus-config)     | CLI and config types            |
+| [argus-frontier](crates/argus-frontier) | URL queue (in-memory, Redis)    |
+| [argus-fetcher](crates/argus-fetcher)   | HTTP client                     |
+| [argus-parser](crates/argus-parser)     | HTML link extraction            |
+| [argus-robots](crates/argus-robots)     | robots.txt (stub)               |
+| [argus-dedupe](crates/argus-dedupe)     | Seen-URL set (in-memory, Redis) |
+| [argus-storage](crates/argus-storage)   | Persistence (no-op, file)       |
+| [argus-worker](crates/argus-worker)     | Crawl loop and rate limiting    |
+| [argus-cli](crates/argus-cli)           | CLI entrypoint                  |
 
 ## Documentation
 
