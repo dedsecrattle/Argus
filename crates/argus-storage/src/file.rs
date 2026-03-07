@@ -133,8 +133,14 @@ mod tests {
 
         let meta_json = std::fs::read_to_string(&meta_path).unwrap();
         let meta: serde_json::Value = serde_json::from_str(&meta_json).expect("valid JSON");
-        assert_eq!(meta.get("url").and_then(|v| v.as_str()), Some("https://example.com/"));
-        assert_eq!(meta.get("final_url").and_then(|v| v.as_str()), Some("https://example.com/"));
+        assert_eq!(
+            meta.get("url").and_then(|v| v.as_str()),
+            Some("https://example.com/")
+        );
+        assert_eq!(
+            meta.get("final_url").and_then(|v| v.as_str()),
+            Some("https://example.com/")
+        );
         assert_eq!(meta.get("status").and_then(|v| v.as_u64()), Some(200));
 
         let body = std::fs::read(&body_path).unwrap();
