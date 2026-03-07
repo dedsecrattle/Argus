@@ -8,7 +8,7 @@ use tokio::io::AsyncWriteExt;
 
 use argus_common::{CrawlJob, FetchResult};
 
-use crate::storage_trait::{Storage, url_to_fragment};
+use crate::storage_trait::{url_to_fragment, Storage};
 
 #[derive(Serialize)]
 struct PageMeta {
@@ -56,7 +56,10 @@ impl Storage for FileStorage {
         let fragment = url_to_fragment(&job.normalized_url);
         let body_path = format!("body/{}.bin", fragment);
         let body_full = self.base_path.join(&body_path);
-        let meta_path = self.base_path.join("page").join(format!("{}.json", fragment));
+        let meta_path = self
+            .base_path
+            .join("page")
+            .join(format!("{}.json", fragment));
 
         fs::write(&body_full, &result.body)
             .await
@@ -76,8 +79,12 @@ impl Storage for FileStorage {
         };
 
         let json = serde_json::to_string_pretty(&meta).context("serialize meta")?;
-        let mut f = fs::File::create(&meta_path).await.context("create meta file")?;
-        f.write_all(json.as_bytes()).await.context("write meta file")?;
+        let mut f = fs::File::create(&meta_path)
+            .await
+            .context("create meta file")?;
+        f.write_all(json.as_bytes())
+            .await
+            .context("write meta file")?;
 
         Ok(())
     }

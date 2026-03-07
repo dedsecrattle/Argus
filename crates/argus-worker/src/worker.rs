@@ -14,7 +14,8 @@ use crate::rate_limit::{InMemoryRateLimiter, RateLimiter};
 
 #[derive(Clone, Debug)]
 pub struct CrawlConfig {
-    pub seed_url: String,
+    /// If Some, push this URL as the seed job before running. If None (e.g. Redis consumer-only), just drain the queue.
+    pub seed_url: Option<String>,
     pub max_depth: u16,
     pub global_concurrency: usize,
     pub per_host_concurrency: usize,
@@ -33,33 +34,39 @@ where
     F: Frontier + Clone + Send + Sync + 'static,
     S: SeenSet + Clone + Send + Sync + 'static,
 {
-    let (normalized_seed, host) = match argus_common::url::normalize_url(&config.seed_url) {
-        Some(pair) => pair,
-        None => anyhow::bail!("invalid seed URL: {}", config.seed_url),
-    };
-
     argus_storage::init_storage();
 
-    let fetcher = HttpFetcher::new()?;
-    let seed_job = CrawlJob {
-        url: config.seed_url.clone(),
-        normalized_url: normalized_seed.clone(),
-        host: host.clone(),
-        depth: 0,
-    };
-
-    if !seen.insert_if_new(normalized_seed).await {
-        tracing::info!("seed URL already seen, nothing to do");
-        return Ok(());
+    if let Some(ref seed_url) = config.seed_url {
+        let (normalized_seed, host) = match argus_common::url::normalize_url(seed_url) {
+            Some(pair) => pair,
+            None => anyhow::bail!("invalid seed URL: {}", seed_url),
+        };
+        let seed_job = CrawlJob {
+            url: seed_url.clone(),
+            normalized_url: normalized_seed.clone(),
+            host: host.clone(),
+            depth: 0,
+        };
+        if !seen.insert_if_new(normalized_seed).await {
+            tracing::info!("seed URL already seen, skipping push");
+        } else {
+            frontier.push(seed_job).await;
+        }
+        tracing::info!(
+            "crawl started seed={} concurrency={} max_depth={}",
+            seed_url,
+            config.global_concurrency,
+            config.max_depth
+        );
+    } else {
+        tracing::info!(
+            "crawl started (consumer only) concurrency={} max_depth={}",
+            config.global_concurrency,
+            config.max_depth
+        );
     }
-    frontier.push(seed_job).await;
 
-    tracing::info!(
-        "crawl started seed={} concurrency={} max_depth={}",
-        config.seed_url,
-        config.global_concurrency,
-        config.max_depth
-    );
+    let fetcher = HttpFetcher::new()?;
 
     let fetched = Arc::new(AtomicU64::new(0));
     let active = Arc::new(AtomicU64::new(0));
@@ -171,10 +178,7 @@ where
 }
 
 /// In-memory backend for single-node runs.
-pub async fn run_in_memory(
-    config: CrawlConfig,
-    storage: Arc<dyn Storage>,
-) -> Result<()> {
+pub async fn run_in_memory(config: CrawlConfig, storage: Arc<dyn Storage>) -> Result<()> {
     let frontier = argus_frontier::InMemoryFrontier::default();
     let seen = argus_dedupe::SeenUrlSet::default();
     let rate_limiter = Arc::new(InMemoryRateLimiter::default());
@@ -202,4 +206,32 @@ pub async fn run_redis(
         Arc::new(InMemoryRateLimiter::default())
     };
     run(config, frontier, seen, storage, rate_limiter).await
+}
+
+/// Push URLs onto the Redis frontier (and mark them in the seen set). Exits after pushing; no crawl.
+#[cfg(feature = "redis")]
+pub async fn seed_redis(redis_url: &str, urls: &[String]) -> Result<()> {
+    use argus_dedupe::RedisSeenSet;
+    use argus_frontier::RedisFrontier;
+
+    let frontier = RedisFrontier::connect(redis_url, None).await?;
+    let seen = RedisSeenSet::connect(redis_url, None).await?;
+
+    for url in urls {
+        let Some((normalized_url, host)) = argus_common::url::normalize_url(url) else {
+            tracing::warn!("invalid URL, skipping: {}", url);
+            continue;
+        };
+        let job = CrawlJob {
+            url: url.clone(),
+            normalized_url: normalized_url.clone(),
+            host,
+            depth: 0,
+        };
+        if seen.insert_if_new(normalized_url).await {
+            frontier.push(job).await;
+            tracing::info!("seeded: {}", url);
+        }
+    }
+    Ok(())
 }
