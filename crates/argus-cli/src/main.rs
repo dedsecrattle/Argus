@@ -55,13 +55,7 @@ async fn run_crawl(opts: CrawlOpts) -> Result<()> {
     };
 
     if let Some(redis_url) = redis_url {
-        argus_worker::worker::run_redis(
-            config,
-            redis_url,
-            storage,
-            opts.redis_rate_limit,
-        )
-        .await
+        argus_worker::worker::run_redis(config, redis_url, storage, opts.redis_rate_limit).await
     } else {
         let url = config
             .seed_url
