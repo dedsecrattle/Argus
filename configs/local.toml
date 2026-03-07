@@ -1,0 +1,5 @@
+seed_url = "https://example.com"
+global_concurrency = 32
+per_host_concurrency = 1
+per_host_delay_ms = 500
+max_depth = 2

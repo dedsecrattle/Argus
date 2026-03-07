@@ -1,6 +1,17 @@
 [package]
 name = "argus-worker"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+
+argus-common = { path = "../argus-common" }
+argus-frontier = { path = "../argus-frontier" }
+argus-fetcher = { path = "../argus-fetcher" }
+argus-parser = { path = "../argus-parser" }
+argus-robots = { path = "../argus-robots" }
+argus-dedupe = { path = "../argus-dedupe" }
+argus-storage = { path = "../argus-storage" }
