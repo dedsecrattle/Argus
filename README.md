@@ -1,136 +1,149 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Argus" width="200" />
+</p>
+
 # Argus
 
-A distributed web crawler written in Rust.
+**Argus** is a distributed web crawler written in Rust. Run it as a single process or scale out across many workers sharing a Redis-backed queue and seen set.
 
-## Prerequisites
+[![CI](https://github.com/your-username/argus/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/argus/actions)
 
-- Rust stable toolchain (see `rust-toolchain.toml`)
+---
 
-## Build
+## Overview
+
+- **Single-node or distributed** — In-memory for local runs; Redis for a shared frontier and deduplication across processes.
+- **Async** — Tokio-based worker pool with configurable concurrency and per-host rate limiting (in-memory or Redis).
+- **Persistent storage** — Optional file-based storage for fetched pages (metadata JSON + raw body).
+- **CLI** — `crawl` to run the crawler; `seed` to push URLs into Redis for worker-based setups.
+
+## Requirements
+
+- [Rust](https://www.rust-lang.org/) stable (see [rust-toolchain.toml](rust-toolchain.toml))
+- For distributed mode: [Redis](https://redis.io/) (e.g. via [Docker](https://www.docker.com/))
+
+## Installation
 
 ```bash
-cargo build
+git clone https://github.com/your-username/argus.git
+cd argus
+cargo build --release -p argus-cli
 ```
 
-## Run
+The binary is at `target/release/argus-cli`. Symlink or copy it to a directory on your `PATH` if you want to run it as `argus`.
+
+## Quick start
+
+**One-off crawl (single process):**
 
 ```bash
-cargo run -p argus-cli -- --seed-url https://example.com
+cargo run -p argus-cli -- crawl --seed-url https://example.com --max-depth 2
 ```
 
-Or use the convenience script:
+**With Redis (e.g. for multiple workers):**
 
 ```bash
-./scripts/run_local.sh
+docker compose up -d redis
+cargo run -p argus-cli -- crawl --seed-url https://example.com --redis-url
 ```
 
-### CLI Options
+See [Deployment](docs/deployment.md) for multi-worker and continuous-crawl setups.
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--seed-url` | required | Starting URL for the crawl |
-| `--global-concurrency` | 32 | Max concurrent fetch tasks (Tokio workers) |
-| `--per-host-concurrency` | 1 | Reserved for future per-host concurrency cap |
-| `--per-host-delay-ms` | 500 | Minimum delay between requests to the same host |
-| `--max-depth` | 2 | Maximum link depth from seed |
-| `--redis-url` | (none) | Use Redis for frontier and seen set. Pass with no value for default `redis://127.0.0.1:6379/` (docker-compose). |
-| `--redis-rate-limit` | false | When using Redis, use Redis for per-host rate limiting so all processes share the same limit. |
-| `--storage-dir` | (none) | Directory to persist fetch results (metadata JSON + body files). Creates `page/` and `body/` subdirs. |
+## Usage
 
-### Redis (docker-compose)
+### Commands
 
-Start Redis with the included compose file:
+| Command | Description |
+|--------|-------------|
+| `crawl` | Run the crawler. Seeds the queue (or Redis) with `--seed-url` if given, then consumes until the queue is empty. With `--redis-url`, omit `--seed-url` to run as a consumer only. |
+| `seed` | Push one or more URLs into the Redis frontier and exit. Use to feed a shared queue without running a crawl. |
+
+### Examples
+
+```bash
+# Single process, limit depth
+argus crawl --seed-url https://example.com --max-depth 1
+
+# Persist fetched pages to disk
+argus crawl --seed-url https://example.com --storage-dir ./crawl-data
+
+# Feed Redis and run workers (distributed)
+argus seed --redis-url -u https://example.com -u https://iana.org
+argus crawl --redis-url --redis-rate-limit
+```
+
+### Crawl options
+
+| Option | Default | Description |
+|--------|--------|--------------|
+| `--seed-url <URL>` | required (unless Redis consumer-only) | Starting URL. Omit when using `--redis-url` to run as consumer only. |
+| `--max-depth <N>` | 2 | Maximum link depth from seed. |
+| `--global-concurrency <N>` | 32 | Number of concurrent fetch tasks per process. |
+| `--per-host-delay-ms <MS>` | 500 | Minimum delay between requests to the same host. |
+| `--redis-url [URL]` | (none) | Use Redis for frontier and seen set. No value = `redis://127.0.0.1:6379/`. |
+| `--redis-rate-limit` | false | Use Redis for per-host rate limiting (shared across workers). |
+| `--storage-dir <DIR>` | (none) | Directory for persisted pages (`page/*.json`, `body/*.bin`). |
+
+### Seed options
+
+| Option | Description |
+|--------|-------------|
+| `--redis-url [URL]` | Redis URL. No value = `redis://127.0.0.1:6379/`. |
+| `-u, --url <URL>...` | One or more URLs to push onto the frontier. |
+
+## Redis and Docker
+
+A Redis instance is required for distributed mode. Use the included Compose file:
 
 ```bash
 docker compose up -d redis
 ```
 
-Then run the crawler with Redis (default URL points at the compose Redis):
+Then run the CLI with `--redis-url` (or `--redis-url redis://127.0.0.1:6379/`).
 
-```bash
-cargo run -p argus-cli -- --seed-url https://example.com --redis-url
-```
+## Persistent storage
 
-Or pass a URL explicitly: `--redis-url redis://127.0.0.1:6379/`.
+With `--storage-dir <dir>`, each fetched page is written under that directory:
 
-### Distributed mode
+- `page/<hash>.json` — URL, final URL, status, content-type, depth, body path, timestamp
+- `body/<hash>.bin` — raw response body
 
-With a shared Redis instance, multiple crawler processes (or machines) share the same URL queue and seen set. Start Redis (e.g. `docker compose up -d redis`), then run any number of CLI processes with the same `--redis-url`:
+Omit `--storage-dir` to run without writing to disk.
 
-```bash
-# Terminal 1: docker compose up -d redis
+## Project structure
 
-# Terminal 2 and 3 (or more): run crawlers with the same seed and Redis URL
-cargo run -p argus-cli -- --seed-url https://example.com --redis-url
-```
+| Crate | Description |
+|-------|-------------|
+| [argus-common](crates/argus-common) | Shared types, URL normalization |
+| [argus-config](crates/argus-config) | CLI and config types |
+| [argus-frontier](crates/argus-frontier) | URL queue (in-memory, Redis) |
+| [argus-fetcher](crates/argus-fetcher) | HTTP client |
+| [argus-parser](crates/argus-parser) | HTML link extraction |
+| [argus-robots](crates/argus-robots) | robots.txt (stub) |
+| [argus-dedupe](crates/argus-dedupe) | Seen-URL set (in-memory, Redis) |
+| [argus-storage](crates/argus-storage) | Persistence (no-op, file) |
+| [argus-worker](crates/argus-worker) | Crawl loop and rate limiting |
+| [argus-cli](crates/argus-cli) | CLI entrypoint |
 
-Each process runs `global_concurrency` async workers that pull from the shared queue. Add `--redis-rate-limit` so per-host delay is enforced in Redis and shared across all processes.
+## Documentation
 
-## Workspace Crates
-
-| Crate | Purpose |
-|-------|---------|
-| `argus-common` | Shared types and URL normalization |
-| `argus-config` | CLI argument parsing |
-| `argus-frontier` | URL queue management |
-| `argus-fetcher` | HTTP client for page retrieval |
-| `argus-parser` | HTML link extraction |
-| `argus-robots` | robots.txt handling |
-| `argus-dedupe` | URL deduplication |
-| `argus-storage` | Crawl data persistence |
-| `argus-worker` | Crawl loop orchestration |
-| `argus-cli` | Command-line entry point |
-
-## Configuration
-
-See `configs/local.toml` for an example configuration file.
-
-## Architecture
-
-See `docs/architecture.md` for a high-level overview of the crawl pipeline.
-
-## Testing
-
-**Unit tests**
-
-```bash
-cargo test --workspace
-```
-
-Runs tests in all crates (e.g. URL normalization in `argus-common`, link extraction in `argus-parser`). To run tests for one crate:
-
-```bash
-cargo test -p argus-common
-cargo test -p argus-parser
-```
-
-**Manual crawl**
-
-Run the CLI with a seed URL and optional limits. Uses the network.
-
-```bash
-cargo run -p argus-cli -- --seed-url https://example.com --max-depth 1
-```
-
-`--max-depth 1` keeps the crawl small (seed + one hop). Omit it for a deeper crawl.
+- [Architecture](docs/architecture.md) — Crawl pipeline and data flow
+- [Deployment](docs/deployment.md) — Single-node, distributed workers, containers, continuous crawl
 
 ## Development
 
 ```bash
 cargo fmt --all
 cargo clippy --workspace --all-targets --all-features -- -D warnings
-cargo test --workspace
+cargo test --workspace --all-features
 ```
 
-## Persistent storage
+CI runs the same steps (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
-With `--storage-dir <dir>`, each fetched page is written under that directory:
+## Contributing
 
-- `page/<hash>.json` – URL, final URL, status, content-type, depth, body path, timestamp
-- `body/<hash>.bin` – raw response body
+Contributions are welcome. Open an issue or a pull request; for larger changes, discuss in an issue first.
 
-Omit `--storage-dir` to run without writing to disk.
+## License
 
-## Next
-
-Add robots.txt parsing and optional persistent storage backends (e.g. SQLite).
+See [LICENSE](LICENSE) in the repository root.
