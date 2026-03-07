@@ -4,7 +4,6 @@ use anyhow::{Context, Result};
 use async_trait::async_trait;
 use serde::Serialize;
 use tokio::fs;
-use tokio::io::AsyncWriteExt;
 
 use argus_common::{CrawlJob, FetchResult};
 
@@ -79,10 +78,7 @@ impl Storage for FileStorage {
         };
 
         let json = serde_json::to_string_pretty(&meta).context("serialize meta")?;
-        let mut f = fs::File::create(&meta_path)
-            .await
-            .context("create meta file")?;
-        f.write_all(json.as_bytes())
+        fs::write(&meta_path, json.as_bytes())
             .await
             .context("write meta file")?;
 
@@ -99,7 +95,10 @@ mod tests {
     use super::*;
 
     fn temp_dir() -> PathBuf {
-        std::env::temp_dir().join(format!("argus-storage-test-{}", std::process::id()))
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        let n = COUNTER.fetch_add(1, Ordering::SeqCst);
+        std::env::temp_dir().join(format!("argus-storage-test-{}-{}", std::process::id(), n))
     }
 
     #[tokio::test]
@@ -133,8 +132,10 @@ mod tests {
         assert!(body_path.exists(), "body file should exist");
 
         let meta_json = std::fs::read_to_string(&meta_path).unwrap();
-        assert!(meta_json.contains("https://example.com/"));
-        assert!(meta_json.contains("\"status\": 200"));
+        let meta: serde_json::Value = serde_json::from_str(&meta_json).expect("valid JSON");
+        assert_eq!(meta.get("url").and_then(|v| v.as_str()), Some("https://example.com/"));
+        assert_eq!(meta.get("final_url").and_then(|v| v.as_str()), Some("https://example.com/"));
+        assert_eq!(meta.get("status").and_then(|v| v.as_u64()), Some(200));
 
         let body = std::fs::read(&body_path).unwrap();
         assert_eq!(body, b"<html>body</html>");
