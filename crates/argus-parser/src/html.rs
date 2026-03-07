@@ -26,3 +26,39 @@ pub fn extract_links(base_url: &str, body: &[u8]) -> Vec<ExtractedLink> {
         })
         .collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn extracts_absolute_link() {
+        let html = b"<a href=\"https://example.com/other\">link</a>";
+        let links = extract_links("https://example.com/page", html);
+        assert_eq!(links.len(), 1);
+        assert_eq!(links[0].from_url, "https://example.com/page");
+        assert_eq!(links[0].to_url, "https://example.com/other");
+    }
+
+    #[test]
+    fn resolves_relative_link() {
+        let html = b"<a href=\"/about\">about</a>";
+        let links = extract_links("https://example.com/", html);
+        assert_eq!(links.len(), 1);
+        assert_eq!(links[0].to_url, "https://example.com/about");
+    }
+
+    #[test]
+    fn returns_empty_for_invalid_utf8() {
+        let body = b"\xff\xfe";
+        let links = extract_links("https://example.com/", body);
+        assert!(links.is_empty());
+    }
+
+    #[test]
+    fn returns_empty_for_no_links() {
+        let html = b"<p>no links here</p>";
+        let links = extract_links("https://example.com/", html);
+        assert!(links.is_empty());
+    }
+}

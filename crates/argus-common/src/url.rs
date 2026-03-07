@@ -14,3 +14,31 @@ pub fn normalize_url(input: &str) -> Option<(String, String)> {
 
     Some((url.to_string(), host))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalizes_https_and_strips_default_port() {
+        let (url, host) = normalize_url("https://example.com:443/path").unwrap();
+        assert_eq!(url, "https://example.com/path");
+        assert_eq!(host, "example.com");
+    }
+
+    #[test]
+    fn strips_fragment() {
+        let (url, _) = normalize_url("https://example.com/page#section").unwrap();
+        assert_eq!(url, "https://example.com/page");
+    }
+
+    #[test]
+    fn rejects_invalid_url() {
+        assert!(normalize_url("not a url").is_none());
+    }
+
+    #[test]
+    fn rejects_mailto() {
+        assert!(normalize_url("mailto:foo@bar.com").is_none());
+    }
+}

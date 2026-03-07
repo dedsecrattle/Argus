@@ -57,6 +57,31 @@ See `configs/local.toml` for an example configuration file.
 
 See `docs/architecture.md` for a high-level overview of the crawl pipeline.
 
+## Testing
+
+**Unit tests**
+
+```bash
+cargo test --workspace
+```
+
+Runs tests in all crates (e.g. URL normalization in `argus-common`, link extraction in `argus-parser`). To run tests for one crate:
+
+```bash
+cargo test -p argus-common
+cargo test -p argus-parser
+```
+
+**Manual crawl**
+
+Run the CLI with a seed URL and optional limits. Uses the network.
+
+```bash
+cargo run -p argus-cli -- --seed-url https://example.com --max-depth 1
+```
+
+`--max-depth 1` keeps the crawl small (seed + one hop). Omit it for a deeper crawl.
+
 ## Development
 
 ```bash

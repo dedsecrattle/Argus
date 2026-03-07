@@ -17,7 +17,14 @@ async fn main() -> Result<()> {
 
     tracing::info!("starting argus with seed {}", cli.seed_url);
 
-    argus_worker::worker::run().await?;
+    let config = argus_worker::worker::CrawlConfig {
+        seed_url: cli.seed_url,
+        max_depth: cli.max_depth,
+        global_concurrency: cli.global_concurrency,
+        per_host_concurrency: cli.per_host_concurrency,
+        per_host_delay_ms: cli.per_host_delay_ms,
+    };
+    argus_worker::worker::run(config).await?;
 
     Ok(())
 }
