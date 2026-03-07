@@ -21,4 +21,12 @@ pub struct Cli {
     /// Redis URL for distributed mode. If set with no value, uses redis://127.0.0.1:6379/ (matches docker-compose).
     #[arg(long, num_args = 0..=1, default_missing_value = "redis://127.0.0.1:6379/")]
     pub redis_url: Option<String>,
+
+    /// When using Redis, use Redis for per-host rate limiting so all processes share the same limit.
+    #[arg(long)]
+    pub redis_rate_limit: bool,
+
+    /// Directory to persist fetch results (metadata JSON + body files). If unset, nothing is written to disk.
+    #[arg(long)]
+    pub storage_dir: Option<std::path::PathBuf>,
 }

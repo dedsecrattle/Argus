@@ -116,6 +116,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "argus-config",
+ "argus-storage",
  "argus-worker",
  "clap",
  "tokio",
@@ -202,6 +203,11 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "argus-common",
+ "async-trait",
+ "bytes",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -216,6 +222,8 @@ dependencies = [
  "argus-parser",
  "argus-robots",
  "argus-storage",
+ "async-trait",
+ "redis",
  "tokio",
  "tracing",
 ]

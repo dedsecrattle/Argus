@@ -34,6 +34,8 @@ Or use the convenience script:
 | `--per-host-delay-ms` | 500 | Minimum delay between requests to the same host |
 | `--max-depth` | 2 | Maximum link depth from seed |
 | `--redis-url` | (none) | Use Redis for frontier and seen set. Pass with no value for default `redis://127.0.0.1:6379/` (docker-compose). |
+| `--redis-rate-limit` | false | When using Redis, use Redis for per-host rate limiting so all processes share the same limit. |
+| `--storage-dir` | (none) | Directory to persist fetch results (metadata JSON + body files). Creates `page/` and `body/` subdirs. |
 
 ### Redis (docker-compose)
 
@@ -62,7 +64,7 @@ With a shared Redis instance, multiple crawler processes (or machines) share the
 cargo run -p argus-cli -- --seed-url https://example.com --redis-url
 ```
 
-Each process runs `global_concurrency` async workers that pull from the shared queue. Per-host delay is enforced locally per process; for strict global per-host rate limits you’d need a shared rate limiter (e.g. Redis-backed).
+Each process runs `global_concurrency` async workers that pull from the shared queue. Add `--redis-rate-limit` so per-host delay is enforced in Redis and shared across all processes.
 
 ## Workspace Crates
 
@@ -120,6 +122,15 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace
 ```
 
+## Persistent storage
+
+With `--storage-dir <dir>`, each fetched page is written under that directory:
+
+- `page/<hash>.json` – URL, final URL, status, content-type, depth, body path, timestamp
+- `body/<hash>.bin` – raw response body
+
+Omit `--storage-dir` to run without writing to disk.
+
 ## Next
 
-Add persistent storage for crawl results, then optional Redis-backed per-host rate limiting for distributed runs.
+Add robots.txt parsing and optional persistent storage backends (e.g. SQLite).

@@ -1,5 +1,8 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use argus_config::cli::Cli;
+use argus_storage::{FileStorage, NoopStorage, Storage};
 use clap::Parser;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
@@ -25,10 +28,25 @@ async fn main() -> Result<()> {
         per_host_delay_ms: cli.per_host_delay_ms,
     };
 
+    let storage: Arc<dyn Storage> = match &cli.storage_dir {
+        Some(dir) => {
+            let s = FileStorage::new(dir);
+            s.ensure_dirs().await?;
+            Arc::new(s)
+        }
+        None => Arc::new(NoopStorage),
+    };
+
     if let Some(ref redis_url) = cli.redis_url {
-        argus_worker::worker::run_redis(config, redis_url).await?;
+        argus_worker::worker::run_redis(
+            config,
+            redis_url,
+            storage,
+            cli.redis_rate_limit,
+        )
+        .await?;
     } else {
-        argus_worker::worker::run_in_memory(config).await?;
+        argus_worker::worker::run_in_memory(config, storage).await?;
     }
 
     Ok(())

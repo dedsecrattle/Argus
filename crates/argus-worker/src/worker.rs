@@ -1,7 +1,5 @@
-use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
-use std::time::{Duration, Instant};
 
 use anyhow::Result;
 use argus_common::CrawlJob;
@@ -10,8 +8,9 @@ use argus_fetcher::http::HttpFetcher;
 use argus_frontier::Frontier;
 use argus_parser::html;
 use argus_robots;
-use argus_storage;
-use tokio::sync::Mutex;
+use argus_storage::Storage;
+
+use crate::rate_limit::{InMemoryRateLimiter, RateLimiter};
 
 #[derive(Clone, Debug)]
 pub struct CrawlConfig {
@@ -22,9 +21,14 @@ pub struct CrawlConfig {
     pub per_host_delay_ms: u64,
 }
 
-/// Runs the crawl with the given frontier and seen set. Use in-memory or Redis
-/// backends so the same logic works single-node or distributed.
-pub async fn run<F, S>(config: CrawlConfig, frontier: F, seen: S) -> Result<()>
+/// Runs the crawl with the given frontier, seen set, storage, and rate limiter.
+pub async fn run<F, S>(
+    config: CrawlConfig,
+    frontier: F,
+    seen: S,
+    storage: Arc<dyn Storage>,
+    rate_limiter: Arc<dyn RateLimiter>,
+) -> Result<()>
 where
     F: Frontier + Clone + Send + Sync + 'static,
     S: SeenSet + Clone + Send + Sync + 'static,
@@ -59,10 +63,6 @@ where
 
     let fetched = Arc::new(AtomicU64::new(0));
     let active = Arc::new(AtomicU64::new(0));
-    let last_fetch_per_host: Arc<Mutex<HashMap<String, Instant>>> =
-        Arc::new(Mutex::new(HashMap::new()));
-    let delay = Duration::from_millis(config.per_host_delay_ms);
-
     let concurrency = config.global_concurrency.max(1);
     let mut handles = Vec::with_capacity(concurrency);
 
@@ -70,11 +70,11 @@ where
         let frontier = frontier.clone();
         let seen = seen.clone();
         let fetcher = fetcher.clone();
+        let storage = Arc::clone(&storage);
+        let rate_limiter = Arc::clone(&rate_limiter);
         let config = config.clone();
         let fetched = Arc::clone(&fetched);
         let active = Arc::clone(&active);
-        let last_fetch = Arc::clone(&last_fetch_per_host);
-        let delay_ms = delay;
 
         handles.push(tokio::spawn(async move {
             loop {
@@ -84,7 +84,7 @@ where
                         if active.load(Ordering::SeqCst) == 0 {
                             break;
                         }
-                        tokio::time::sleep(Duration::from_millis(50)).await;
+                        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
                         continue;
                     }
                 };
@@ -100,19 +100,9 @@ where
                     continue;
                 }
 
-                {
-                    let map = last_fetch.lock().await;
-                    let last = map.get(&job.host).copied();
-                    drop(map);
-                    if let Some(last) = last {
-                        let elapsed = last.elapsed();
-                        if elapsed < delay_ms {
-                            tokio::time::sleep(delay_ms - elapsed).await;
-                        }
-                    }
-                    let mut map = last_fetch.lock().await;
-                    map.insert(job.host.clone(), Instant::now());
-                }
+                rate_limiter
+                    .wait_for_host(&job.host, config.per_host_delay_ms)
+                    .await;
 
                 let fetch_result = match fetcher.fetch(&job).await {
                     Ok(r) => r,
@@ -126,6 +116,10 @@ where
                 let n = fetched.fetch_add(1, Ordering::SeqCst) + 1;
                 if n == 1 || n.is_multiple_of(10) {
                     tracing::info!("fetched {} pages (current: {})", n, job.url);
+                }
+
+                if let Err(e) = storage.record_fetch(&job, &fetch_result).await {
+                    tracing::warn!("storage record failed url={} error={}", job.url, e);
                 }
 
                 if fetch_result.status != 200 {
@@ -177,20 +171,35 @@ where
 }
 
 /// In-memory backend for single-node runs.
-pub async fn run_in_memory(config: CrawlConfig) -> Result<()> {
+pub async fn run_in_memory(
+    config: CrawlConfig,
+    storage: Arc<dyn Storage>,
+) -> Result<()> {
     let frontier = argus_frontier::InMemoryFrontier::default();
     let seen = argus_dedupe::SeenUrlSet::default();
-    run(config, frontier, seen).await
+    let rate_limiter = Arc::new(InMemoryRateLimiter::default());
+    run(config, frontier, seen, storage, rate_limiter).await
 }
 
-/// Redis-backed frontier and seen set so multiple processes share the same queue.
-/// Run with `cargo run -p argus-cli --features redis -- --redis-url redis://127.0.0.1/ ...`
+/// Redis-backed frontier and seen set; optional Redis-backed rate limiter for global per-host delay.
 #[cfg(feature = "redis")]
-pub async fn run_redis(config: CrawlConfig, redis_url: &str) -> Result<()> {
+pub async fn run_redis(
+    config: CrawlConfig,
+    redis_url: &str,
+    storage: Arc<dyn Storage>,
+    use_redis_rate_limit: bool,
+) -> Result<()> {
     use argus_dedupe::RedisSeenSet;
     use argus_frontier::RedisFrontier;
 
+    use crate::rate_limit::RedisRateLimiter;
+
     let frontier = RedisFrontier::connect(redis_url, None).await?;
     let seen = RedisSeenSet::connect(redis_url, None).await?;
-    run(config, frontier, seen).await
+    let rate_limiter: Arc<dyn RateLimiter> = if use_redis_rate_limit {
+        Arc::new(RedisRateLimiter::connect(redis_url).await?)
+    } else {
+        Arc::new(InMemoryRateLimiter::default())
+    };
+    run(config, frontier, seen, storage, rate_limiter).await
 }

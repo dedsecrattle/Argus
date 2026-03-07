@@ -8,7 +8,7 @@ default = []
 redis = ["dep:redis"]
 
 [dependencies]
-tokio = { version = "1", features = ["sync"] }
+tokio = { version = "1", features = ["sync", "rt-multi-thread", "macros"] }
 anyhow = "1"
 async-trait = "0.1"
 argus-common = { path = "../argus-common" }

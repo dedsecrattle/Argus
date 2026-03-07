@@ -18,3 +18,24 @@ impl SeenSet for SeenUrlSet {
         guard.insert(url)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn insert_if_new_returns_true_for_new_url() {
+        let set = SeenUrlSet::default();
+        let inserted = set.insert_if_new("https://example.com/".to_string()).await;
+        assert!(inserted);
+    }
+
+    #[tokio::test]
+    async fn insert_if_new_returns_false_for_seen_url() {
+        let set = SeenUrlSet::default();
+        let url = "https://example.com/page".to_string();
+        set.insert_if_new(url.clone()).await;
+        let inserted = set.insert_if_new(url).await;
+        assert!(!inserted);
+    }
+}
