@@ -5,7 +5,7 @@
 set -e
 
 VERSION=${1:-"0.1.0"}
-REPO=${2:-"yourusername/argus"}
+REPO=${2:-"dedsecrattle/argus"}
 
 echo "🍺 Setting up Homebrew formula for Argus v$VERSION"
 echo "=============================================="
@@ -21,7 +21,7 @@ echo "🔑 SHA256: $SHA256"
 # Update formula with actual values
 sed -e "s/{{ version }}/$VERSION/g" \
     -e "s/{{ tarball_sha256 }}/$SHA256/g" \
-    -e "s/yourusername/$(echo $REPO | cut -d'/' -f1)/g" \
+    -e "s/dedsecrattle/$(echo $REPO | cut -d'/' -f1)/g" \
     homebrew/argus.rb > homebrew/argus.rb.tmp
 
 mv homebrew/argus.rb.tmp homebrew/argus.rb
@@ -41,6 +41,6 @@ echo "   3. Copy homebrew/argus.rb to Formula/argus.rb"
 echo "   4. Commit and submit a PR"
 echo ""
 echo "   Or for a tap (easier):"
-echo "   1. Create a new repo: https://github.com/yourusername/homebrew-argus"
-echo "   2. Add tap: brew tap yourusername/argus"
+echo "   1. Create a new repo: https://github.com/dedsecrattle/homebrew-argus"
+echo "   2. Add tap: brew tap dedsecrattle/argus"
 echo "   3. Install: brew install argus"

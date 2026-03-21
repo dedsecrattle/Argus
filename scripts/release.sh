@@ -6,7 +6,7 @@
 set -e
 
 VERSION=${1:-"0.1.0"}
-REPO=${2:-"yourusername/argus"}
+REPO=${2:-"dedsecrattle/argus"}
 
 echo "🚀 Argus Complete Release Script v$VERSION"
 echo "=========================================="
@@ -134,7 +134,7 @@ cargo install argus-cli
 brew install argus
 
 # Docker
-docker pull yourusername/argus:$VERSION
+docker pull dedsecrattle/argus:$VERSION
 \`\`\`
 
 ## Changes
@@ -143,8 +143,8 @@ $(sed -n "/## \[$VERSION\]/,/## \[.*\]/p" CHANGELOG.md | sed '$d')
 
 ## Docker Images
 
-- \`yourusername/argus:$VERSION\`
-- \`yourusername/argus:latest\`
+- \`dedsecrattle/argus:$VERSION\`
+- \`dedsecrattle/argus:latest\`
 
 ## Verification
 
@@ -166,12 +166,12 @@ build_docker() {
     log_info "Building and pushing Docker images..."
     
     # Build images
-    docker build -t "yourusername/argus:$VERSION" .
-    docker build -t "yourusername/argus:latest" .
+    docker build -t "dedsecrattle/argus:$VERSION" .
+    docker build -t "dedsecrattle/argus:latest" .
     
     # Push images
-    docker push "yourusername/argus:$VERSION"
-    docker push "yourusername/argus:latest"
+    docker push "dedsecrattle/argus:$VERSION"
+    docker push "dedsecrattle/argus:latest"
     
     log_success "Docker images pushed"
 }
@@ -273,7 +273,7 @@ summary() {
     echo ""
     echo "✅ Published to:"
     echo "   - Cargo: https://crates.io/crates/argus-cli"
-    echo "   - Docker: https://hub.docker.com/r/yourusername/argus"
+    echo "   - Docker: https://hub.docker.com/r/dedsecrattle/argus"
     echo ""
     echo "📝 Manual steps remaining:"
     echo "   1. Create GitHub release: https://github.com/$REPO/releases/new"

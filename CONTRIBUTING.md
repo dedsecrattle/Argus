@@ -24,7 +24,7 @@ Thank you for your interest in contributing to Argus! This guide will help you g
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/yourusername/argus.git
+   git clone https://github.com/dedsecrattle/argus.git
    cd argus
    ```
 
@@ -56,7 +56,7 @@ Thank you for your interest in contributing to Argus! This guide will help you g
 
 ### Reporting Bugs
 
-- Use the [GitHub issue tracker](https://github.com/yourusername/argus/issues)
+- Use the [GitHub issue tracker](https://github.com/dedsecrattle/argus/issues)
 - Include:
   - Rust version (`rustc --version`)
   - Operating system

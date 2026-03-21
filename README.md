@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![Crates.io](https://img.shields.io/crates/v/argus-cli.svg)](https://crates.io/crates/argus-cli)
-[![Documentation](https://docs.rs/argus-cli/badge.svg)](https://docs.rs/argus-cli)
-[![Build Status](https://github.com/yourusername/argus/workflows/CI/badge.svg)](https://github.com/yourusername/argus/actions)
+[![Crates.io](https://img.shields.io/crates/v/argus-crawler.svg)](https://crates.io/crates/argus-crawler)
+[![Documentation](https://docs.rs/argus-crawler/badge.svg)](https://docs.rs/argus-crawler)
+[![Build Status](https://github.com/dedsecrattle/argus/workflows/CI/badge.svg)](https://github.com/dedsecrattle/argus/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready web crawler written in Rust, capable of handling **billions of URLs** with advanced features like content deduplication, distributed crawling, and JavaScript rendering.
@@ -17,12 +17,13 @@ A production-ready web crawler written in Rust, capable of handling **billions o
 
 #### 📦 Cargo (Recommended)
 ```bash
-cargo install argus-cli
+cargo install argus-crawler
 ```
 
 #### 🍺 Homebrew (macOS)
 ```bash
-brew install argus
+brew tap dedsecrattle/argus
+brew install argus-crawler
 ```
 
 #### 🐧 Snap (Linux)
@@ -37,7 +38,7 @@ choco install argus
 
 #### 🐳 Docker
 ```bash
-docker run yourusername/argus crawl --seed-url https://example.com
+docker run dedsecrattle/argus crawl --seed-url https://example.com
 ```
 
 ### Basic Usage
@@ -107,7 +108,7 @@ argus crawl --seed-url https://spa-example.com --js-render
 
 ## 📚 Documentation
 
-- [API Documentation](https://docs.rs/argus-cli)
+- [API Documentation](https://docs.rs/argus-crawler)
 - [Deployment Guide](DEPLOYMENT_GUIDE.md)
 - [Scaling to 1B URLs](docs/SCALING_GUIDE.md)
 - [Contributing](CONTRIBUTING.md)
@@ -174,7 +175,7 @@ argus crawl \
 
 ### Setup
 ```bash
-git clone https://github.com/yourusername/argus.git
+git clone https://github.com/dedsecrattle/argus.git
 cd argus
 cargo build
 cargo test
@@ -198,7 +199,7 @@ cargo test --all-features
 
 This is a workspace with the following crates:
 
-- [argus-cli](https://crates.io/crates/argus-cli) - Command-line interface
+- [argus-crawler](https://crates.io/crates/argus-crawler) - Command-line interface
 - [argus-common](https://crates.io/crates/argus-common) - Common types and utilities
 - [argus-fetcher](https://crates.io/crates/argus-fetcher) - HTTP fetching with retry logic
 - [argus-parser](https://crates.io/crates/argus-parser) - HTML and sitemap parsing
@@ -214,10 +215,10 @@ This is a workspace with the following crates:
 ### Basic Usage
 ```bash
 # Pull image
-docker pull yourusername/argus:latest
+docker pull dedsecrattle/argus:latest
 
 # Run crawl
-docker run -v $(pwd)/data:/data yourusername/argus \
+docker run -v $(pwd)/data:/data dedsecrattle/argus \
   crawl --seed-url https://example.com --storage-dir /data
 ```
 
@@ -231,7 +232,7 @@ services:
       - "6379:6379"
   
   argus:
-    image: yourusername/argus:latest
+    image: dedsecrattle/argus:latest
     command: crawl --redis-url redis://redis:6379
     volumes:
       - ./data:/data
@@ -262,17 +263,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- [Website](https://yourusername.github.io/argus)
-- [Documentation](https://docs.rs/argus-cli)
-- [Crates.io](https://crates.io/crates/argus-cli)
-- [Docker Hub](https://hub.docker.com/r/yourusername/argus)
-- [GitHub](https://github.com/yourusername/argus)
+- [Website](https://dedsecrattle.github.io/argus)
+- [Documentation](https://docs.rs/argus-crawler)
+- [Crates.io](https://crates.io/crates/argus-crawler)
+- [Docker Hub](https://hub.docker.com/r/dedsecrattle/argus)
+- [GitHub](https://github.com/dedsecrattle/argus)
 
 ---
 
 <div align="center">
 
-**[⭐ Star us on GitHub!](https://github.com/yourusername/argus)**
+**[⭐ Star us on GitHub!](https://github.com/dedsecrattle/argus)**
 
 Made with ❤️ by the Argus contributors
 

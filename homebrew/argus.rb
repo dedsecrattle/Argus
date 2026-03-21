@@ -1,7 +1,7 @@
 class Argus < Formula
   desc "Production-ready web crawler capable of handling billions of URLs"
-  homepage "https://github.com/yourusername/argus"
-  url "https://github.com/yourusername/argus/archive/refs/tags/v{{ version }}.tar.gz"
+  homepage "https://github.com/dedsecrattle/argus"
+  url "https://github.com/dedsecrattle/argus/archive/refs/tags/v{{ version }}.tar.gz"
   sha256 "{{ tarball_sha256 }}"
   license "MIT"
 

@@ -54,7 +54,7 @@ argus --version
    - Build and push Docker images
 
 3. Manual steps:
-   - Go to https://github.com/yourusername/argus/releases/new
+   - Go to https://github.com/dedsecrattle/argus/releases/new
    - Auto-generate release notes from tag
    - Attach binaries (optional)
 
@@ -76,23 +76,23 @@ Already created in project root.
 ### Build and Push
 ```bash
 # Build locally
-docker build -t yourusername/argus:latest .
-docker build -t yourusername/argus:v0.1.0 .
+docker build -t dedsecrattle/argus:latest .
+docker build -t dedsecrattle/argus:v0.1.0 .
 
 # Push to Docker Hub
 docker login
-docker push yourusername/argus:latest
-docker push yourusername/argus:v0.1.0
+docker push dedsecrattle/argus:latest
+docker push dedsecrattle/argus:v0.1.0
 ```
 
 ### Usage
 ```bash
 # Pull and run
-docker pull yourusername/argus:latest
-docker run --rm yourusername/argus crawl --seed-url https://example.com
+docker pull dedsecrattle/argus:latest
+docker run --rm dedsecrattle/argus crawl --seed-url https://example.com
 
 # With Redis
-docker run --rm --link redis:redis yourusername/argus \
+docker run --rm --link redis:redis dedsecrattle/argus \
   crawl --redis-url redis://redis:6379
 ```
 
@@ -101,7 +101,7 @@ docker run --rm --link redis:redis yourusername/argus \
 version: '3.8'
 services:
   argus:
-    image: yourusername/argus:latest
+    image: dedsecrattle/argus:latest
     command: crawl --seed-url https://example.com
     volumes:
       - ./data:/data
@@ -134,7 +134,7 @@ services:
 1. Create tap repository:
    ```bash
    # On GitHub: Create new repo "homebrew-argus"
-   git clone https://github.com/yourusername/homebrew-argus.git
+   git clone https://github.com/dedsecrattle/homebrew-argus.git
    cd homebrew-argus
    mkdir -p Formula
    cp /path/to/argus/homebrew/argus.rb Formula/
@@ -145,13 +145,13 @@ services:
 
 2. Users install with:
    ```bash
-   brew tap yourusername/argus
+   brew tap dedsecrattle/argus
    brew install argus
    ```
 
 ### Setup Script
 ```bash
-./scripts/setup-homebrew.sh 0.1.0 yourusername/argus
+./scripts/setup-homebrew.sh 0.1.0 dedsecrattle/argus
 ```
 
 ---
@@ -182,8 +182,8 @@ services:
        <title>Argus Web Crawler</title>
        <authors>Your Name</authors>
        <description>Production-ready web crawler</description>
-       <licenseUrl>https://github.com/yourusername/argus/blob/main/LICENSE</licenseUrl>
-       <projectUrl>https://github.com/yourusername/argus</projectUrl>
+       <licenseUrl>https://github.com/dedsecrattle/argus/blob/main/LICENSE</licenseUrl>
+       <projectUrl>https://github.com/dedsecrattle/argus</projectUrl>
        <tags>crawler web rust</tags>
      </metadata>
    </package>
@@ -196,7 +196,7 @@ services:
    $packageArgs = @{
      packageName     = 'argus'
      fileType        = 'exe'
-     url             = 'https://github.com/yourusername/argus/releases/download/v0.1.0/argus-x86_64-pc-windows-msvc.exe'
+     url             = 'https://github.com/dedsecrattle/argus/releases/download/v0.1.0/argus-x86_64-pc-windows-msvc.exe'
      checksum        = '{{checksum}}'
      checksumType    = 'sha256'
    }
@@ -343,13 +343,13 @@ After publishing, check:
 
 4. **Build Docker Images**
    ```bash
-   docker build -t yourusername/argus:v0.1.0 .
-   docker push yourusername/argus:v0.1.0
+   docker build -t dedsecrattle/argus:v0.1.0 .
+   docker push dedsecrattle/argus:v0.1.0
    ```
 
 5. **Setup Homebrew**
    ```bash
-   ./scripts/setup-homebrew.sh v0.1.0 yourusername/argus
+   ./scripts/setup-homebrew.sh v0.1.0 dedsecrattle/argus
    ```
 
 6. **Submit to Other Platforms**
@@ -377,7 +377,7 @@ cargo install argus-cli
 brew install argus
 
 # Option 3: Docker
-docker run yourusername/argus crawl --seed-url https://example.com
+docker run dedsecrattle/argus crawl --seed-url https://example.com
 ```
 
 ### Linux
@@ -389,7 +389,7 @@ cargo install argus-cli
 snap install argus
 
 # Option 3: Docker
-docker run yourusername/argus crawl --seed-url https://example.com
+docker run dedsecrattle/argus crawl --seed-url https://example.com
 ```
 
 ### Windows
@@ -401,7 +401,7 @@ cargo install argus-cli
 choco install argus
 
 # Option 3: Docker
-docker run yourusername/argus crawl --seed-url https://example.com
+docker run dedsecrattle/argus crawl --seed-url https://example.com
 ```
 
 ---
@@ -409,8 +409,8 @@ docker run yourusername/argus crawl --seed-url https://example.com
 ## URLs After Release
 
 - **Cargo**: https://crates.io/crates/argus-cli
-- **GitHub**: https://github.com/yourusername/argus
-- **Docker Hub**: https://hub.docker.com/r/yourusername/argus
+- **GitHub**: https://github.com/dedsecrattle/argus
+- **Docker Hub**: https://hub.docker.com/r/dedsecrattle/argus
 - **Docs**: https://docs.rs/argus-cli
 - **Homebrew**: `brew install argus`
 - **Chocolatey**: `choco install argus`
