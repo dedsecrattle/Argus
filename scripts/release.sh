@@ -64,6 +64,17 @@ check_prerequisites() {
     log_success "Prerequisites checked"
 }
 
+# Run tests (before updating versions)
+run_tests() {
+    log_info "Running tests..."
+    
+    cargo test --workspace --all-features
+    cargo clippy --workspace --all-features -- -D warnings
+    cargo fmt --all -- --check
+    
+    log_success "All tests passed"
+}
+
 # Update version numbers
 update_versions() {
     log_info "Updating version numbers to $VERSION..."
@@ -81,17 +92,6 @@ update_versions() {
     # ... (add more sed commands as needed)
     
     log_success "Version numbers updated"
-}
-
-# Run tests
-run_tests() {
-    log_info "Running tests..."
-    
-    cargo test --workspace --all-features
-    cargo clippy --workspace --all-features -- -D warnings
-    cargo fmt --all -- --check
-    
-    log_success "All tests passed"
 }
 
 # Create git tag
@@ -304,8 +304,8 @@ main() {
     fi
     
     check_prerequisites
-    update_versions
     run_tests
+    update_versions
     create_tag
     publish_cargo
     create_github_release
