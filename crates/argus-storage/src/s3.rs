@@ -31,7 +31,7 @@ impl S3Storage {
     /// * `bucket` - S3 bucket name
     /// * `prefix` - Optional prefix for all keys (e.g., "crawl/")
     pub async fn new(bucket: String, prefix: Option<String>) -> Result<Self> {
-        let config = aws_config::load_from_env().await;
+        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
         let client = Client::new(&config);
 
         Ok(Self {
@@ -47,7 +47,7 @@ impl S3Storage {
         prefix: Option<String>,
         endpoint_url: String,
     ) -> Result<Self> {
-        let config = aws_config::load_from_env().await;
+        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
         let s3_config = aws_sdk_s3::config::Builder::from(&config)
             .endpoint_url(endpoint_url)
             .force_path_style(true) // Required for MinIO

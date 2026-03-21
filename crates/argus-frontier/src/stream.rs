@@ -10,6 +10,9 @@ use redis::{aio::ConnectionManager, AsyncCommands, RedisError};
 use std::collections::HashMap;
 
 #[cfg(feature = "redis")]
+type XAutoClaimResult = Vec<HashMap<String, Vec<(String, HashMap<String, String>)>>>;
+
+#[cfg(feature = "redis")]
 use crate::frontier::Frontier;
 
 /// Redis Streams-based frontier for high-throughput job distribution
@@ -126,7 +129,7 @@ impl StreamFrontier {
         &mut self,
         idle_time_ms: usize,
     ) -> Result<Vec<(String, CrawlJob)>> {
-        let result: Vec<HashMap<String, Vec<(String, HashMap<String, String>)>>> =
+        let result: XAutoClaimResult =
             redis::cmd("XAUTOCLAIM")
                 .arg(&self.stream_key)
                 .arg(&self.consumer_group)
