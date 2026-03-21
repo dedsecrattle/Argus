@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>argus</id>
+    <version>0.1.0</version>
+    <packageSourceUrl>https://github.com/dedsecrattle/argus</packageSourceUrl>
+    <owners>dedsecrattle</owners>
+    <title>Argus Web Crawler</title>
+    <authors>Argus Contributors</authors>
+    <projectUrl>https://github.com/dedsecrattle/argus</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/dedsecrattle/argus/main/assets/icon.png</iconUrl>
+    <copyright>2025 Argus Contributors</copyright>
+    <licenseUrl>https://github.com/dedsecrattle/argus/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/dedsecrattle/argus</projectSourceUrl>
+    <docsUrl>https://docs.rs/argus-crawler</docsUrl>
+    <bugTrackerUrl>https://github.com/dedsecrattle/argus/issues</bugTrackerUrl>
+    <tags>crawler web scraping spider rust</tags>
+    <summary>Production-ready web crawler capable of handling billions of URLs</summary>
+    <description>
+Argus is a production-ready web crawler built in Rust, designed to handle billions of URLs efficiently.
+It features distributed crawling, content deduplication, JavaScript rendering support, and a Redis-based URL frontier.
+
+Key features:
+- High-performance async crawling
+- Distributed architecture with Redis
+- Content deduplication with Simhash
+- JavaScript rendering support
+- Robots.txt compliance
+- Configurable politeness policies
+- Multiple storage backends
+
+This package installs the argus-crawler command-line tool.
+    </description>
+    <releaseNotes>Initial release v0.1.0</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

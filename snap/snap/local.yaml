@@ -1,0 +1,28 @@
+name: argus
+version: '0.1.0'
+summary: Production-ready web crawler
+description: |
+  Argus is a production-ready web crawler built in Rust.
+
+grade: stable
+confinement: strict
+
+apps:
+  argus:
+    command: bin/argus
+    plugs:
+      - home
+      - network
+      - network-bind
+
+parts:
+  argus:
+    plugin: rust
+    source: ./crates/argus-cli
+    build-packages:
+      - pkg-config
+      - libssl-dev
+    stage-packages:
+      - libssl3
+
+license: MIT

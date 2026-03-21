@@ -1,0 +1,45 @@
+name: argus
+base: core22
+version: '0.1.0'
+summary: Production-ready web crawler
+description: |
+  Argus is a production-ready web crawler built in Rust, designed to handle 
+  billions of URLs efficiently. It features distributed crawling, content 
+  deduplication, JavaScript rendering support, and a Redis-based URL frontier.
+
+grade: stable
+confinement: strict
+
+apps:
+  argus:
+    command: bin/argus
+    plugs:
+      - home
+      - network
+      - network-bind
+
+parts:
+  argus:
+    plugin: rust
+    source: .
+    build-packages:
+      - pkg-config
+      - libssl-dev
+    stage-packages:
+      - libssl3
+
+  # Copy the binary to the expected location
+  copy-binary:
+    plugin: dump
+    source: .
+    organize:
+      cargo/bin/argus: bin/argus
+    stage:
+      - bin/argus
+    after: [argus]
+
+license: MIT
+contact: https://github.com/dedsecrattle/argus/issues
+website: https://github.com/dedsecrattle/argus
+issues: https://github.com/dedsecrattle/argus/issues
+source-code: https://github.com/dedsecrattle/argus
