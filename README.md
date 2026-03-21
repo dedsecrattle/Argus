@@ -4,7 +4,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/argus-crawler.svg)](https://crates.io/crates/argus-crawler)
 [![Documentation](https://docs.rs/argus-crawler/badge.svg)](https://docs.rs/argus-crawler)
-[![Build Status](https://github.com/dedsecrattle/argus/workflows/CI/badge.svg)](https://github.com/dedsecrattle/argus/actions)
+[![Build Status](https://github.com/dedsecrattle/argus/workflows/ci/badge.svg)](https://github.com/dedsecrattle/argus/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready web crawler written in Rust, capable of handling **billions of URLs** with advanced features like content deduplication, distributed crawling, and JavaScript rendering.
