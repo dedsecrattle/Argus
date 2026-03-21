@@ -2,6 +2,15 @@
 name = "argus-frontier"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "URL frontier implementations for web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-frontier"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "frontier", "queue", "redis"]
+categories = ["web-programming", "development-tools"]
 
 [features]
 default = []

@@ -2,6 +2,15 @@
 name = "argus-worker"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "Worker implementation for distributed web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-worker"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "worker", "distributed", "async"]
+categories = ["web-programming", "asynchronous"]
 
 [features]
 default = []

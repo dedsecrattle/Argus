@@ -2,6 +2,15 @@
 name = "argus-fetcher"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "HTTP fetching utilities with retry logic for web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-fetcher"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "http", "fetch", "retry"]
+categories = ["web-programming", "network-programming"]
 
 [features]
 default = []

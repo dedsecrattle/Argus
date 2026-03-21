@@ -2,6 +2,15 @@
 name = "argus-dedupe"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "Content deduplication utilities for web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-dedupe"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "deduplication", "simhash", "bloom"]
+categories = ["web-programming", "algorithms"]
 
 [features]
 default = []

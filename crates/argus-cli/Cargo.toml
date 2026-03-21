@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Argus Contributors"]
 description = "A production-ready web crawler capable of handling billions of URLs"
-homepage = "https://github.com/yourusername/argus"
-repository = "https://github.com/yourusername/argus"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
 documentation = "https://docs.rs/argus-cli"
 readme = "../../README.md"
 license = "MIT"
@@ -23,6 +23,6 @@ tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 
-argus-config = { version = "0.1.0" }
-argus-storage = { version = "0.1.0" }
-argus-worker = { version = "0.1.0", features = ["redis"] }
+argus-config = { path = "../argus-config" }
+argus-storage = { path = "../argus-storage" }
+argus-worker = { path = "../argus-worker", features = ["redis"] }

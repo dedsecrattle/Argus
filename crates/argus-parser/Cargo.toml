@@ -2,6 +2,15 @@
 name = "argus-parser"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "HTML and sitemap parsing utilities for web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-parser"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "html", "parser", "sitemap"]
+categories = ["parsing", "web-programming"]
 
 [dependencies]
 scraper = "0.20"

@@ -2,6 +2,15 @@
 name = "argus-robots"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "Robots.txt parsing and caching for web crawling"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-robots"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "robots", "txt", "parsing"]
+categories = ["parsing", "web-programming"]
 
 [dependencies]
 anyhow = "1"

@@ -2,6 +2,15 @@
 name = "argus-common"
 version = "0.1.0"
 edition = "2021"
+authors = ["Argus Contributors"]
+description = "Common types and utilities for the Argus web crawler"
+homepage = "https://github.com/dedsecrattle/argus"
+repository = "https://github.com/dedsecrattle/argus"
+documentation = "https://docs.rs/argus-common"
+readme = "../../README.md"
+license = "MIT"
+keywords = ["crawler", "web", "common", "types"]
+categories = ["web-programming"]
 
 [dependencies]
 anyhow = "1"
