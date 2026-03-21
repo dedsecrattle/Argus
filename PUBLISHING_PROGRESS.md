@@ -1,6 +1,6 @@
 # Argus v0.1.0 Publishing Progress
 
-## ✅ Published (8/10 crates)
+## ✅ Published (9/10 crates)
 
 1. **argus-common** v0.1.0 - ✅ Published
    - crates.io: https://crates.io/crates/argus-common
@@ -25,14 +25,14 @@
    
 8. **argus-frontier** v0.1.0 - ✅ Published
    - crates.io: https://crates.io/crates/argus-frontier
-
-## ⏳ Rate Limited (2 remaining)
-
-9. **argus-worker** v0.1.0 - ⏳ Rate limited
-   - Can publish after: 2026-03-21 19:08:57 GMT
    
-10. **argus-cli** v0.1.0 - ⏳ Waiting for worker
-    - Depends on: argus-worker
+9. **argus-crawler** v0.1.0 - ✅ Published (renamed from argus-cli)
+   - crates.io: https://crates.io/crates/argus-crawler
+
+## ⏳ Remaining (1 crate)
+
+10. **argus-worker** v0.1.0 - ⏳ Index issue
+    - Shows as published but not available
 
 ## 📊 Rate Limits
 
@@ -75,8 +75,8 @@ brew install argus-crawler
 
 ### After Full Release:
 ```bash
-# Complete CLI
-cargo install argus-cli
+# Complete CLI (renamed to avoid conflict)
+cargo install argus-crawler
 
 # Will include all features
 argus crawl --seed-url https://example.com
