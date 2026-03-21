@@ -21,18 +21,18 @@ impl Simhash {
 
         for token in tokens {
             let hash = hash_token(token);
-            for i in 0..SIMHASH_BITS {
+            for (i, count) in v.iter_mut().enumerate().take(SIMHASH_BITS) {
                 if (hash >> i) & 1 == 1 {
-                    v[i] += 1;
+                    *count += 1;
                 } else {
-                    v[i] -= 1;
+                    *count -= 1;
                 }
             }
         }
 
         let mut fingerprint: u64 = 0;
-        for i in 0..SIMHASH_BITS {
-            if v[i] > 0 {
+        for (i, &count) in v.iter().enumerate().take(SIMHASH_BITS) {
+            if count > 0 {
                 fingerprint |= 1 << i;
             }
         }

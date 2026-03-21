@@ -19,8 +19,6 @@ pub fn parse_sitemap(content: &str) -> Vec<SitemapEntry> {
     let mut current_url: Option<SitemapUrl> = None;
     let mut in_url = false;
     let mut in_sitemap = false;
-    let mut current_tag = String::new();
-    let mut current_content = String::new();
 
     for line in content.lines() {
         let line = line.trim();
@@ -49,27 +47,24 @@ pub fn parse_sitemap(content: &str) -> Vec<SitemapEntry> {
                 if let Some(tag_end) = line.find('>') {
                     let tag = &line[tag_start + 1..tag_end];
                     if !tag.starts_with('/') {
-                        current_tag = tag.to_string();
                         let content_start = tag_end + 1;
                         if let Some(close_start) = line[content_start..].find('<') {
-                            current_content = line[content_start..content_start + close_start]
+                            let tag_content = line[content_start..content_start + close_start]
                                 .trim()
                                 .to_string();
 
                             if in_url {
                                 if let Some(ref mut url) = current_url {
-                                    match current_tag.as_str() {
-                                        "loc" => url.loc = current_content.clone(),
-                                        "lastmod" => url.lastmod = Some(current_content.clone()),
-                                        "changefreq" => {
-                                            url.changefreq = Some(current_content.clone())
-                                        }
-                                        "priority" => url.priority = current_content.parse().ok(),
+                                    match tag {
+                                        "loc" => url.loc = tag_content,
+                                        "lastmod" => url.lastmod = Some(tag_content),
+                                        "changefreq" => url.changefreq = Some(tag_content),
+                                        "priority" => url.priority = tag_content.parse().ok(),
                                         _ => {}
                                     }
                                 }
-                            } else if in_sitemap && current_tag == "loc" {
-                                entries.push(SitemapEntry::Index(current_content.clone()));
+                            } else if in_sitemap && tag == "loc" {
+                                entries.push(SitemapEntry::Index(tag_content));
                             }
                         }
                     }

@@ -2,7 +2,7 @@ use argus_common::ExtractedLink;
 use scraper::{Html, Selector};
 use url::Url;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct PageMetadata {
     pub canonical_url: Option<String>,
     pub alternate_urls: Vec<String>,
@@ -89,17 +89,6 @@ pub fn extract_metadata(body: &[u8]) -> PageMetadata {
     }
 
     metadata
-}
-
-impl Default for PageMetadata {
-    fn default() -> Self {
-        Self {
-            canonical_url: None,
-            alternate_urls: Vec::new(),
-            title: None,
-            description: None,
-        }
-    }
 }
 
 #[cfg(test)]
