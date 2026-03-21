@@ -64,9 +64,7 @@ pub fn parse_sitemap(content: &str) -> Vec<SitemapEntry> {
                                         "changefreq" => {
                                             url.changefreq = Some(current_content.clone())
                                         }
-                                        "priority" => {
-                                            url.priority = current_content.parse().ok()
-                                        }
+                                        "priority" => url.priority = current_content.parse().ok(),
                                         _ => {}
                                     }
                                 }

@@ -153,8 +153,12 @@ mod tests {
                      <link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr\">";
         let metadata = extract_metadata(html);
         assert_eq!(metadata.alternate_urls.len(), 2);
-        assert!(metadata.alternate_urls.contains(&"https://example.com/es".to_string()));
-        assert!(metadata.alternate_urls.contains(&"https://example.com/fr".to_string()));
+        assert!(metadata
+            .alternate_urls
+            .contains(&"https://example.com/es".to_string()));
+        assert!(metadata
+            .alternate_urls
+            .contains(&"https://example.com/fr".to_string()));
     }
 
     #[test]
@@ -163,10 +167,7 @@ mod tests {
                      <meta name=\"description\" content=\"Page description\">";
         let metadata = extract_metadata(html);
         assert_eq!(metadata.title, Some("Page Title".to_string()));
-        assert_eq!(
-            metadata.description,
-            Some("Page description".to_string())
-        );
+        assert_eq!(metadata.description, Some("Page description".to_string()));
     }
 
     #[test]
@@ -175,7 +176,11 @@ mod tests {
                      <link rel=\"alternate\" href=\"/page2\">";
         let links = extract_links("https://example.com/", html);
         assert_eq!(links.len(), 2);
-        assert!(links.iter().any(|l| l.to_url == "https://example.com/page1"));
-        assert!(links.iter().any(|l| l.to_url == "https://example.com/page2"));
+        assert!(links
+            .iter()
+            .any(|l| l.to_url == "https://example.com/page1"));
+        assert!(links
+            .iter()
+            .any(|l| l.to_url == "https://example.com/page2"));
     }
 }

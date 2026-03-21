@@ -36,10 +36,7 @@ impl ContentType {
     }
 
     pub fn is_text_based(&self) -> bool {
-        matches!(
-            self,
-            Self::Html | Self::Text | Self::Json | Self::Xml
-        )
+        matches!(self, Self::Html | Self::Text | Self::Json | Self::Xml)
     }
 
     pub fn is_crawlable(&self) -> bool {
@@ -161,7 +158,10 @@ mod tests {
             ContentType::from_mime("text/html; charset=utf-8"),
             ContentType::Html
         );
-        assert_eq!(ContentType::from_mime("application/json"), ContentType::Json);
+        assert_eq!(
+            ContentType::from_mime("application/json"),
+            ContentType::Json
+        );
         assert_eq!(ContentType::from_mime("application/xml"), ContentType::Xml);
         assert_eq!(ContentType::from_mime("application/pdf"), ContentType::Pdf);
         assert_eq!(ContentType::from_mime("image/png"), ContentType::Image);
@@ -203,9 +203,7 @@ mod tests {
     fn content_limits_check_size() {
         let limits = ContentLimits::default();
 
-        assert!(limits
-            .check_size(ContentType::Html, 1024 * 1024)
-            .is_ok());
+        assert!(limits.check_size(ContentType::Html, 1024 * 1024).is_ok());
 
         assert!(limits
             .check_size(ContentType::Html, 20 * 1024 * 1024)

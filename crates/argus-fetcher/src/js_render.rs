@@ -45,8 +45,7 @@ impl JsRenderer {
             let browser = Browser::new(options).context("failed to launch browser")?;
             let tab = browser.new_tab().context("failed to create tab")?;
 
-            tab.navigate_to(&url)
-                .context("failed to navigate to URL")?;
+            tab.navigate_to(&url).context("failed to navigate to URL")?;
 
             tab.wait_for_element_with_custom_timeout("body", timeout)
                 .context("timeout waiting for body element")?;
