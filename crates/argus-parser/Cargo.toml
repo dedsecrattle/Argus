@@ -15,4 +15,4 @@ categories = ["parsing", "web-programming"]
 [dependencies]
 scraper = "0.20"
 url = "2"
-argus-common = { path = "../argus-common" }
+argus-common = { version = "0.1.0" }
