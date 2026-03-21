@@ -14,7 +14,7 @@ categories = ["parsing", "web-programming"]
 
 [dependencies]
 anyhow = "1"
-argus-common = { path = "../argus-common" }
+argus-common = { version = "0.1.0" }
 reqwest = { version = "0.12", features = ["rustls-tls"] }
 tokio = { version = "1", features = ["sync", "time"] }
 url = "2"
