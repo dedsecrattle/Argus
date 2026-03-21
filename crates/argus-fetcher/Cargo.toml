@@ -23,4 +23,4 @@ reqwest = { version = "0.12", features = ["rustls-tls", "gzip", "brotli", "defla
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 tracing = "0.1"
 headless_chrome = { version = "1.0", optional = true }
-argus-common = { path = "../argus-common" }
+argus-common = { version = "0.1.0" }
