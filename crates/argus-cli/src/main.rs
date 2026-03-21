@@ -54,18 +54,24 @@ async fn run_crawl(opts: CrawlOpts) -> Result<()> {
         None => Arc::new(NoopStorage),
     };
 
+    let shutdown = argus_worker::ShutdownSignal::new();
+    let shutdown_clone = shutdown.clone();
+
+    tokio::spawn(async move {
+        argus_worker::listen_for_shutdown(shutdown_clone).await;
+    });
+
     if let Some(redis_url) = redis_url {
-        argus_worker::worker::run_redis(config, redis_url, storage, opts.redis_rate_limit).await
+        argus_worker::worker::run_redis(config, redis_url, storage, opts.redis_rate_limit, Some(shutdown)).await
     } else {
         let url = config
             .seed_url
             .as_deref()
             .context("crawl without Redis requires --seed-url")?;
-        // In-memory mode requires a seed
         if url.is_empty() {
             anyhow::bail!("--seed-url is required for in-memory crawl");
         }
-        argus_worker::worker::run_in_memory(config, storage).await
+        argus_worker::worker::run_in_memory(config, storage, Some(shutdown)).await
     }
 }
 

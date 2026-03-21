@@ -11,6 +11,7 @@ use argus_robots;
 use argus_storage::Storage;
 
 use crate::rate_limit::{InMemoryRateLimiter, RateLimiter};
+use crate::shutdown::ShutdownSignal;
 
 #[derive(Clone, Debug)]
 pub struct CrawlConfig {
@@ -29,6 +30,7 @@ pub async fn run<F, S>(
     seen: S,
     storage: Arc<dyn Storage>,
     rate_limiter: Arc<dyn RateLimiter>,
+    shutdown: Option<ShutdownSignal>,
 ) -> Result<()>
 where
     F: Frontier + Clone + Send + Sync + 'static,
@@ -73,6 +75,8 @@ where
     let concurrency = config.global_concurrency.max(1);
     let mut handles = Vec::with_capacity(concurrency);
 
+    let shutdown_signal = shutdown.unwrap_or_default();
+
     for _ in 0..concurrency {
         let frontier = frontier.clone();
         let seen = seen.clone();
@@ -82,9 +86,15 @@ where
         let config = config.clone();
         let fetched = Arc::clone(&fetched);
         let active = Arc::clone(&active);
+        let shutdown_clone = shutdown_signal.clone();
 
         handles.push(tokio::spawn(async move {
             loop {
+                if shutdown_clone.is_shutdown() {
+                    tracing::info!("worker shutting down gracefully");
+                    break;
+                }
+
                 let job = match frontier.pop().await {
                     Some(j) => j,
                     None => {
@@ -178,11 +188,15 @@ where
 }
 
 /// In-memory backend for single-node runs.
-pub async fn run_in_memory(config: CrawlConfig, storage: Arc<dyn Storage>) -> Result<()> {
+pub async fn run_in_memory(
+    config: CrawlConfig,
+    storage: Arc<dyn Storage>,
+    shutdown: Option<ShutdownSignal>,
+) -> Result<()> {
     let frontier = argus_frontier::InMemoryFrontier::default();
     let seen = argus_dedupe::SeenUrlSet::default();
     let rate_limiter = Arc::new(InMemoryRateLimiter::default());
-    run(config, frontier, seen, storage, rate_limiter).await
+    run(config, frontier, seen, storage, rate_limiter, shutdown).await
 }
 
 /// Redis-backed frontier and seen set; optional Redis-backed rate limiter for global per-host delay.
@@ -192,6 +206,7 @@ pub async fn run_redis(
     redis_url: &str,
     storage: Arc<dyn Storage>,
     use_redis_rate_limit: bool,
+    shutdown: Option<ShutdownSignal>,
 ) -> Result<()> {
     use argus_dedupe::RedisSeenSet;
     use argus_frontier::RedisFrontier;
@@ -205,7 +220,7 @@ pub async fn run_redis(
     } else {
         Arc::new(InMemoryRateLimiter::default())
     };
-    run(config, frontier, seen, storage, rate_limiter).await
+    run(config, frontier, seen, storage, rate_limiter, shutdown).await
 }
 
 /// Push URLs onto the Redis frontier (and mark them in the seen set). Exits after pushing; no crawl.

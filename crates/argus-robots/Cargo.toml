@@ -6,3 +6,11 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 argus-common = { path = "../argus-common" }
+reqwest = { version = "0.12", features = ["rustls-tls"] }
+tokio = { version = "1", features = ["sync", "time"] }
+url = "2"
+tracing = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+wiremock = "0.6"
