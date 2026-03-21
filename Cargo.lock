@@ -180,7 +180,7 @@ name = "argus-frontier"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "argus-common 0.1.0",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "async-trait",
  "redis",
  "serde_json",
@@ -192,7 +192,7 @@ dependencies = [
 name = "argus-parser"
 version = "0.1.0"
 dependencies = [
- "argus-common 0.1.0",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "scraper",
  "url",
 ]
@@ -223,24 +223,6 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
-]
-
-[[package]]
-name = "argus-worker"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "argus-common 0.1.0",
- "argus-dedupe",
- "argus-fetcher",
- "argus-frontier",
- "argus-parser",
- "argus-robots",
- "argus-storage",
- "async-trait",
- "redis",
- "tokio",
- "tracing",
 ]
 
 [[package]]
@@ -3451,7 +3433,6 @@ dependencies = [
  "bytes",
  "libc",
  "mio",
- "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2 0.6.3",
