@@ -150,8 +150,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "argus-config"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5bb54dfbd46875b18889eb1ff38701dce6a35774bdea351c3a1eb81ac3aa46e4"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "clap",
+ "serde",
+ "toml",
+]
+
+[[package]]
+name = "argus-crawler"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argus-config 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-storage 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-worker 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "clap",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "argus-dedupe"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "async-trait",
+ "bloomfilter",
+ "redis",
+ "siphasher 1.0.2",
+ "tokio",
+]
+
+[[package]]
+name = "argus-dedupe"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5249764b409020991e8319f48c5c42a0b8a34da82ac27c7683c0299d29207d67"
 dependencies = [
  "anyhow",
  "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -176,8 +218,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "argus-fetcher"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7c2e7b56ecefae86a9d2e4cb9c07cece11e5287c90cd4612f05359e0c6c9e9d"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bytes",
+ "reqwest",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "argus-frontier"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "async-trait",
+ "redis",
+ "serde_json",
+ "tokio",
+ "url",
+]
+
+[[package]]
+name = "argus-frontier"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58b5f41cb7f971c10033164bf6f5420e0eb1892d2cd42a309813fc803327f12b"
 dependencies = [
  "anyhow",
  "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -198,6 +269,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "argus-parser"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b76e8b8564960ed2d5ce459d82992b1a68f1dad78ff9f99043d221e90297c048"
+dependencies = [
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "scraper",
+ "url",
+]
+
+[[package]]
 name = "argus-robots"
 version = "0.1.0"
 dependencies = [
@@ -208,6 +290,20 @@ dependencies = [
  "tracing",
  "url",
  "wiremock",
+]
+
+[[package]]
+name = "argus-robots"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5150426a9a240b6168ac7bcf077b3fc5a1698deca5ba023459a95f3340524ded"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "reqwest",
+ "tokio",
+ "tracing",
+ "url",
 ]
 
 [[package]]
@@ -223,6 +319,59 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+]
+
+[[package]]
+name = "argus-storage"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0b2e4b393665c4cf02e855224f0899cea65f25cd5778428fb7ad539b965c314"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "async-trait",
+ "bytes",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "argus-worker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-dedupe 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-fetcher 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-frontier 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-parser 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-robots 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-storage 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "async-trait",
+ "redis",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "argus-worker"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82807209a3a74bd3169dee6044a8923d39c115cb7d0eb26831227df73418e636"
+dependencies = [
+ "anyhow",
+ "argus-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-dedupe 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-fetcher 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-frontier 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-parser 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-robots 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argus-storage 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "async-trait",
+ "redis",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -2159,6 +2308,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "matchers"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1525a2a28c7f4fa0fc98bb91ae755d1e2d1505079e05539e35bc876b5d65ae9"
+dependencies = [
+ "regex-automata",
+]
+
+[[package]]
 name = "md-5"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2223,6 +2381,15 @@ name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
+
+[[package]]
+name = "nu-ansi-term"
+version = "0.50.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+dependencies = [
+ "windows-sys 0.61.2",
+]
 
 [[package]]
 name = "num-bigint"
@@ -3128,6 +3295,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sharded-slab"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "shlex"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3370,6 +3546,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "thread_local"
+version = "1.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f60246a4944f24f6e018aa17cdeffb7818b76356965d03b07d6a9886e8962185"
+dependencies = [
+ "cfg-if",
+]
+
+[[package]]
 name = "time"
 version = "0.3.47"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3433,6 +3618,7 @@ dependencies = [
  "bytes",
  "libc",
  "mio",
+ "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2 0.6.3",
@@ -3614,6 +3800,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
 dependencies = [
  "once_cell",
+ "valuable",
+]
+
+[[package]]
+name = "tracing-log"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
+dependencies = [
+ "log",
+ "once_cell",
+ "tracing-core",
+]
+
+[[package]]
+name = "tracing-subscriber"
+version = "0.3.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb7f578e5945fb242538965c2d0b04418d38ec25c79d160cd279bf0731c8d319"
+dependencies = [
+ "matchers",
+ "nu-ansi-term",
+ "once_cell",
+ "regex-automata",
+ "sharded-slab",
+ "smallvec",
+ "thread_local",
+ "tracing",
+ "tracing-core",
+ "tracing-log",
 ]
 
 [[package]]
@@ -3756,6 +3972,12 @@ dependencies = [
  "js-sys",
  "wasm-bindgen",
 ]
+
+[[package]]
+name = "valuable"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
 
 [[package]]
 name = "vcpkg"
