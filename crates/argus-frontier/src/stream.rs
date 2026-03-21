@@ -129,17 +129,16 @@ impl StreamFrontier {
         &mut self,
         idle_time_ms: usize,
     ) -> Result<Vec<(String, CrawlJob)>> {
-        let result: XAutoClaimResult =
-            redis::cmd("XAUTOCLAIM")
-                .arg(&self.stream_key)
-                .arg(&self.consumer_group)
-                .arg(&self.consumer_name)
-                .arg(idle_time_ms)
-                .arg("0-0")
-                .arg("COUNT")
-                .arg(self.batch_size)
-                .query_async(&mut self.conn)
-                .await?;
+        let result: XAutoClaimResult = redis::cmd("XAUTOCLAIM")
+            .arg(&self.stream_key)
+            .arg(&self.consumer_group)
+            .arg(&self.consumer_name)
+            .arg(idle_time_ms)
+            .arg("0-0")
+            .arg("COUNT")
+            .arg(self.batch_size)
+            .query_async(&mut self.conn)
+            .await?;
 
         let mut jobs = Vec::new();
         for entry in result {
