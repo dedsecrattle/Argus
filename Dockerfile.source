@@ -1,0 +1,37 @@
+# Multi-stage build for Argus web crawler
+FROM rust:1.80 AS builder
+
+WORKDIR /app
+
+# Copy Cargo files
+COPY Cargo.toml Cargo.lock ./
+COPY crates ./crates
+
+# Build the CLI (skip for now due to unpublished dependencies)
+# RUN cargo build --release -p argus-cli
+
+# For now, just build a minimal binary
+RUN echo '#!/bin/sh\necho "Argus web crawler v0.1.0"\necho "Docker image - CLI will be available after all crates are published"' > /app/argus && chmod +x /app/argus
+
+# Runtime stage
+FROM debian:bullseye-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 argus
+
+WORKDIR /app
+
+# Copy the binary from builder stage
+COPY --from=builder /app/target/release/argus /usr/local/bin/argus
+
+# Create data directory
+RUN mkdir -p /data && chown argus:argus /data
+
+USER argus
+
+ENTRYPOINT ["argus"]
