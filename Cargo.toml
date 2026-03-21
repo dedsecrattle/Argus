@@ -8,5 +8,6 @@ members = [
   "crates/argus-robots",
   "crates/argus-dedupe",
   "crates/argus-storage",
+  "crates/argus-worker",
 ]
 resolver = "2"
