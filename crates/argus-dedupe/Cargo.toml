@@ -20,7 +20,7 @@ redis = ["dep:redis"]
 tokio = { version = "1", features = ["sync", "rt-multi-thread", "macros"] }
 anyhow = "1"
 async-trait = "0.1"
-argus-common = { path = "../argus-common" }
+argus-common = { version = "0.1.0" }
 redis = { version = "0.27", features = ["tokio-comp", "connection-manager"], optional = true }
 bloomfilter = "1.0"
 siphasher = "1.0"
