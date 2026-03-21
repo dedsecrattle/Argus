@@ -64,16 +64,13 @@ impl FetchError {
         if let Some(status) = err.status() {
             let code = status.as_u16();
             if code == 429 {
-                return Self::new(FetchErrorKind::RateLimited, err.to_string())
-                    .with_status(code);
+                return Self::new(FetchErrorKind::RateLimited, err.to_string()).with_status(code);
             }
             if (500..600).contains(&code) {
-                return Self::new(FetchErrorKind::ServerError, err.to_string())
-                    .with_status(code);
+                return Self::new(FetchErrorKind::ServerError, err.to_string()).with_status(code);
             }
             if (400..500).contains(&code) {
-                return Self::new(FetchErrorKind::ClientError, err.to_string())
-                    .with_status(code);
+                return Self::new(FetchErrorKind::ClientError, err.to_string()).with_status(code);
             }
         }
 

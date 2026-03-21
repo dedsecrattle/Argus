@@ -141,9 +141,9 @@ mod tests {
 
         Mock::given(method("GET"))
             .and(path("/robots.txt"))
-            .respond_with(ResponseTemplate::new(200).set_body_string(
-                "User-agent: *\nDisallow: /admin/\n",
-            ))
+            .respond_with(
+                ResponseTemplate::new(200).set_body_string("User-agent: *\nDisallow: /admin/\n"),
+            )
             .expect(1)
             .mount(&mock_server)
             .await;
@@ -181,9 +181,9 @@ mod tests {
 
         Mock::given(method("GET"))
             .and(path("/robots.txt"))
-            .respond_with(ResponseTemplate::new(200).set_body_string(
-                "User-agent: *\nCrawl-delay: 1.5\n",
-            ))
+            .respond_with(
+                ResponseTemplate::new(200).set_body_string("User-agent: *\nCrawl-delay: 1.5\n"),
+            )
             .mount(&mock_server)
             .await;
 
@@ -200,9 +200,9 @@ mod tests {
 
         Mock::given(method("GET"))
             .and(path("/robots.txt"))
-            .respond_with(ResponseTemplate::new(200).set_body_string(
-                "User-agent: *\nDisallow: /\n",
-            ))
+            .respond_with(
+                ResponseTemplate::new(200).set_body_string("User-agent: *\nDisallow: /\n"),
+            )
             .expect(2)
             .mount(&mock_server)
             .await;
@@ -210,11 +210,11 @@ mod tests {
         let cache = RobotsCache::new("TestBot".to_string(), Duration::from_millis(100)).unwrap();
 
         let url = format!("{}/page", mock_server.uri());
-        
+
         assert!(!cache.is_allowed(&url).await.unwrap());
-        
+
         tokio::time::sleep(Duration::from_millis(150)).await;
-        
+
         assert!(!cache.is_allowed(&url).await.unwrap());
     }
 }

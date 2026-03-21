@@ -21,7 +21,7 @@ impl RobotsTxt {
 
         for line in content.lines() {
             let line = line.trim();
-            
+
             if line.is_empty() || line.starts_with('#') {
                 continue;
             }
@@ -44,7 +44,7 @@ impl RobotsTxt {
                     }
                     in_any_section = true;
                     let agent_pattern = value.to_lowercase();
-                    in_matching_section = agent_pattern == "*" 
+                    in_matching_section = agent_pattern == "*"
                         || user_agent.to_lowercase().contains(&agent_pattern)
                         || agent_pattern.contains(&user_agent.to_lowercase());
                 }

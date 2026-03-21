@@ -1,5 +1,5 @@
-mod parser;
 mod cache;
+mod parser;
 
 pub use cache::RobotsCache;
 pub use parser::{RobotsTxt, Rule};

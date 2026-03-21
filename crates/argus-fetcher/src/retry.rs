@@ -47,8 +47,8 @@ impl RetryConfig {
     }
 
     pub fn calculate_backoff(&self, attempt: u32) -> Duration {
-        let backoff_ms = self.initial_backoff.as_millis() as f64
-            * self.backoff_multiplier.powi(attempt as i32);
+        let backoff_ms =
+            self.initial_backoff.as_millis() as f64 * self.backoff_multiplier.powi(attempt as i32);
         let backoff = Duration::from_millis(backoff_ms as u64);
         backoff.min(self.max_backoff)
     }
