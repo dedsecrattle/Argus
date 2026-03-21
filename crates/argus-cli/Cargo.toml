@@ -1,12 +1,12 @@
 [package]
-name = "argus-cli"
+name = "argus-crawler"
 version = "0.1.0"
 edition = "2021"
 authors = ["Argus Contributors"]
 description = "A production-ready web crawler capable of handling billions of URLs"
 homepage = "https://github.com/dedsecrattle/argus"
 repository = "https://github.com/dedsecrattle/argus"
-documentation = "https://docs.rs/argus-cli"
+documentation = "https://docs.rs/argus-crawler"
 readme = "../../README.md"
 license = "MIT"
 keywords = ["crawler", "web", "scraping", "spider", "async"]
