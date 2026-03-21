@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redis:
     image: redis:7-alpine
@@ -5,11 +7,60 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 5
+
+  argus-worker-1:
+    build: .
+    command: >
+      cargo run --release -p argus-cli -- crawl
+      --redis-url redis://redis:6379
+      --workers 4
+      --max-urls 10000
+      --storage-dir /data/crawl
+      --respect-robots
+      --crawl-delay 200
+    volumes:
+      - ./data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - RUST_LOG=info
+
+  argus-worker-2:
+    build: .
+    command: >
+      cargo run --release -p argus-cli -- crawl
+      --redis-url redis://redis:6379
+      --workers 4
+      --max-urls 10000
+      --storage-dir /data/crawl
+      --respect-robots
+      --crawl-delay 200
+    volumes:
+      - ./data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - RUST_LOG=info
+
+  argus-seeder:
+    build: .
+    command: >
+      cargo run --release -p argus-cli -- seed
+      --redis-url redis://redis:6379
+      https://example.com
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - RUST_LOG=info
 
 volumes:
   redis_data:
