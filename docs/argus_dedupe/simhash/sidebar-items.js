@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SIMHASH_BITS"],"fn":["hash_token","tokenize"],"struct":["Simhash"]};

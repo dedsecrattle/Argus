@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extract_links","extract_metadata"],"struct":["PageMetadata"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ContentType"],"fn":["detect_encoding","extract_text_content"],"struct":["ContentLimits"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["url_to_fragment"],"struct":["NoopStorage"],"trait":["Storage"]};

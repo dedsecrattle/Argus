@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Rule"],"fn":["is_allowed"],"mod":["cache","parser"],"struct":["RobotsCache","RobotsTxt"]};

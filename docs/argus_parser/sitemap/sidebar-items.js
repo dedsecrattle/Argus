@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SitemapEntry"],"fn":["discover_sitemap_urls","parse_sitemap"],"struct":["SitemapUrl"]};

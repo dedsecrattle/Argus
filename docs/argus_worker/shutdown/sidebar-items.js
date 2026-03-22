@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["listen_for_shutdown","wait_for_sigterm"],"struct":["ShutdownSignal"]};
